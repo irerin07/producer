@@ -1,5 +1,7 @@
 package com.example.producer.service;
 
+import com.example.producer.service.dto.BookingCancelledEvent;
+import com.example.producer.service.dto.BookingCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookingService {
 
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Value("${app.kafka.topics.booking-created}")
 	private String bookingTopic;
@@ -23,12 +25,12 @@ public class BookingService {
 	private String cancelTopic;
 
 	public void bookMovie(long movieId, long userId) {
-		String payload = "{\"movieId\":" + movieId + ",\"userId\":" + userId + "}";
+		BookingCreatedEvent payload = new BookingCreatedEvent(movieId, userId);
 		kafkaTemplate.send(bookingTopic, payload);
 	}
 
 	public void cancelBooking(long bookingId) {
-		String payload = "{\"bookingId\":" + bookingId + "}";
+		BookingCancelledEvent payload = new BookingCancelledEvent(bookingId);
 		kafkaTemplate.send(cancelTopic, payload);
 	}
 }
