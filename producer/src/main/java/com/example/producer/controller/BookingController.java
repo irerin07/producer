@@ -2,6 +2,8 @@ package com.example.producer.controller;
 
 import com.example.producer.controller.dto.request.BookingRequest;
 import com.example.producer.service.BookingService;
+import com.example.producer.service.dto.BookingCancelledEvent;
+import com.example.producer.service.dto.BookingCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +28,15 @@ public class BookingController {
 
 	@PostMapping
 	public ResponseEntity<String> bookMovie(@RequestBody BookingRequest request) {
-		bookingService.bookMovie(request.movieId(), request.userId());
+		BookingCreatedEvent payload = new BookingCreatedEvent(request.movieId(), request.userId());
+		bookingService.bookMovie(payload);
 		return ResponseEntity.status(HttpStatus.CREATED).body("booking submitted");
 	}
 
 	@DeleteMapping("/{bookingId}")
 	public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId) {
-		bookingService.cancelBooking(bookingId);
+		BookingCancelledEvent payload = new BookingCancelledEvent(bookingId);
+		bookingService.cancelBooking(payload);
 		return ResponseEntity.noContent().build();
 	}
 

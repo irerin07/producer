@@ -17,6 +17,8 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.beans.factory.annotation.Value;
+import com.example.producer.service.dto.BookingCancelledEvent;
+import com.example.producer.service.dto.BookingCreatedEvent;
 
 import java.util.List;
 
@@ -59,7 +61,7 @@ class BookingServiceKafkaIntegrationTest {
 
 	@Test
 	void bookMoviePublishesMessage() {
-		bookingService.bookMovie(12L, 34L);
+		bookingService.bookMovie(new BookingCreatedEvent(12L, 34L));
 
 		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer, "booking.created");
 		assertThat(record.value()).isEqualTo("{\"movieId\":12,\"userId\":34}");
@@ -67,7 +69,7 @@ class BookingServiceKafkaIntegrationTest {
 
 	@Test
 	void cancelBookingPublishesMessage() {
-		bookingService.cancelBooking(99L);
+		bookingService.cancelBooking(new BookingCancelledEvent(99L));
 
 		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer, "booking.cancelled");
 		assertThat(record.value()).isEqualTo("{\"bookingId\":99}");
