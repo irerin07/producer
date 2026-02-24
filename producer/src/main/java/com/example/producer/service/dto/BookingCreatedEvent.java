@@ -5,5 +5,5 @@ package com.example.producer.service.dto;
  * @description booking created event
  * @since 2026.02.23
  **********************************************************************************************************************/
-public record BookingCreatedEvent(long movieId, long userId) {
+public record BookingCreatedEvent(long bookingId, long movieId, long userId) {
 }

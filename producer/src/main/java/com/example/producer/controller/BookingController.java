@@ -1,6 +1,7 @@
 package com.example.producer.controller;
 
 import com.example.producer.controller.dto.request.BookingRequest;
+import com.example.producer.service.BookingIdGenerator;
 import com.example.producer.service.BookingService;
 import com.example.producer.service.dto.BookingCancelledEvent;
 import com.example.producer.service.dto.BookingCreatedEvent;
@@ -25,10 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookingController {
 
 	private final BookingService bookingService;
+	private final BookingIdGenerator bookingIdGenerator;
 
 	@PostMapping
 	public ResponseEntity<String> bookMovie(@RequestBody BookingRequest request) {
-		BookingCreatedEvent payload = new BookingCreatedEvent(request.movieId(), request.userId());
+		long bookingId = bookingIdGenerator.nextId();
+		BookingCreatedEvent payload = new BookingCreatedEvent(bookingId, request.movieId(), request.userId());
 		bookingService.bookMovie(payload);
 		return ResponseEntity.status(HttpStatus.CREATED).body("booking submitted");
 	}

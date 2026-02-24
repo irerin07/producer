@@ -61,10 +61,10 @@ class BookingServiceKafkaIntegrationTest {
 
 	@Test
 	void bookMoviePublishesMessage() {
-		bookingService.bookMovie(new BookingCreatedEvent(12L, 34L));
+		bookingService.bookMovie(new BookingCreatedEvent(56L, 12L, 34L));
 
 		ConsumerRecord<String, String> record = KafkaTestUtils.getSingleRecord(consumer, "booking.created");
-		assertThat(record.value()).isEqualTo("{\"movieId\":12,\"userId\":34}");
+		assertThat(record.value()).isEqualTo("{\"bookingId\":56,\"movieId\":12,\"userId\":34}");
 	}
 
 	@Test
